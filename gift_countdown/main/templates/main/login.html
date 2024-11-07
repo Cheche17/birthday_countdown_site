@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fce4ec; /* Light pink background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+            color: #4a4a7c; /* Darker text color for contrast */
+        }
+
+        h1 {
+            color: #ec407a; /* Pink color for the heading */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #fff; /* White background for the form */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px; /* Fixed width for the form */
+        }
+
+        label {
+            font-weight: bold; /* Bold labels */
+            margin-bottom: 5px;
+            display: block; /* Make labels take full width */
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%; /* Full width inputs */
+            padding: 10px;
+            margin: 5px 0 20px; /* Margin between inputs */
+            border: 2px solid #ec407a; /* Pink border */
+            border-radius: 4px;
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        button {
+            background-color: #ec407a; /* Pink background for the button */
+            color: white; /* White text on button */
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            width: 100%; /* Full width button */
+        }
+
+        button:hover {
+            background-color: #d81b60; /* Darker pink on hover */
+        }
+
+        /* Message styles */
+        ul {
+            list-style-type: none; /* Remove bullets */
+            padding: 0;
+            margin-top: 20px; /* Space above messages */
+        }
+
+        li {
+            background-color: #ffe0f0; /* Light pink for messages */
+            color: #d81b60; /* Darker pink for message text */
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            text-align: center; /* Center message text */
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Login</h1>
+        <form method="post">
+            {% csrf_token %}
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>

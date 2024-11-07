@@ -1,0 +1,24 @@
+<!-- templates/main/add_gift_countdown.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Gift Countdown</title>
+</head>
+<body>
+    <h1>Add Gift Countdown</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="gift_id">Select Gift:</label>
+        <select name="gift_id" id="gift_id">
+            {% for gift in gifts %}
+                <option value="{{ gift.id }}">{{ gift.gift_name }}</option>
+            {% endfor %}
+        </select>
+        <label for="countdown_date">Countdown Date:</label>
+        <input type="datetime-local" name="countdown_date" required>
+        <button type="submit">Add Countdown</button>
+    </form>
+    <a href="{% url 'admin_dashboard' %}">Back to Dashboard</a>
+</body>
+</html>

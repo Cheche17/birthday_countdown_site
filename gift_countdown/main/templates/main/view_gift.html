@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ gift.gift_name }} - Gift Details</title>
+    <style>
+        :root {
+            --primary-color: #FF4081; /* Pink */
+            --secondary-color: #FFB3D1; /* Light pink */
+            --background-color: #fce4ec; /* Very light pink */
+            --text-color: #4a4a7c; /* Darker text color for contrast */
+            --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+        }
+
+        .gift-container {
+            background-color: white;
+            border-radius: 12px; /* More rounded corners */
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            border: 2px solid var(--primary-color); /* Pink border */
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 2.5em; /* Larger heading */
+        }
+
+        .gift-description {
+            color: var(--text-color);
+            margin-bottom: 30px;
+            font-size: 1.2em; /* Slightly larger text for description */
+        }
+
+        .media-container img,
+        .media-container video {
+            max-width: 100%;
+            border-radius: 12px; /* More rounded corners for media */
+            margin: 15px 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px; /* Rounded button */
+            transition: background-color 0.3s;
+            margin-top: 20px; /* Margin for spacing */
+        }
+
+        .back-link:hover {
+            background-color: #E91E63; /* Darker pink on hover */
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .gift-description {
+                font-size: 1em; /* Smaller font on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gift-container">
+        <h1>{{ gift.gift_name }}</h1>
+        
+        <div class="gift-description">
+            {{ gift.gift_description }}
+        </div>
+
+        <!-- Media Section -->
+        <div class="media-container">
+            {% if gift.image %}
+                <img src="{{ gift.image.url }}" alt="{{ gift.gift_name }} image">
+            {% endif %}
+
+            {% if gift.video %}
+                <video controls>
+                    <source src="{{ gift.video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% endif %}
+        </div>
+
+        <a href="{% url 'user_countdown' %}" class="back-link">Back to Countdown</a>
+    </div>
+</body>
+</html>

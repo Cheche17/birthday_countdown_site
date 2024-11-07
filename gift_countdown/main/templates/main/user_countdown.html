@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango Szn!</title>
+    <style>
+        :root {
+            --primary-color: #FF4081; /* Pink */
+            --secondary-color: #FFB3D1; /* Light pink */
+            --background-color: #fce4ec; /* Very light pink */
+            --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+            line-height: 1.6;
+            color: #4a4a7c; /* Darker text color for contrast */
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .countdown-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .countdown-item {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 15px; /* More rounded corners */
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s ease;
+            border: 2px solid var(--primary-color); /* Pink border */
+        }
+
+        .countdown-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .gift-name {
+            font-size: 1.4em;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .countdown {
+            font-size: 1.2em;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .available {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-gift-link {
+            display: none;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 15px;
+            transition: background-color 0.2s ease;
+            display: inline-block; /* Change to inline-block */
+            text-align: center; /* Center text */
+        }
+
+        .view-gift-link:hover {
+            background-color: #E91E63; /* Darker pink on hover */
+        }
+
+        .logout-link {
+            display: inline-block;
+            color: #666;
+            text-decoration: none;
+            margin-top: 30px;
+            padding: 10px 20px;
+            border: 2px solid var(--primary-color); /* Pink border */
+            border-radius: 5px;
+            transition: all 0.2s ease;
+            background-color: white; /* White background */
+        }
+
+        .logout-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .countdown-item {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>🎁 Your Gift Countdown</h1>
+    <ul class="countdown-list">
+        {% for gift in gifts %}
+            <li class="countdown-item">
+                <strong class="gift-name">{{ gift.gift_name }}</strong>
+                <div class="countdown" id="countdown-{{ gift.id }}" data-countdown-date="{{ gift.countdown_date|date:'Y-m-d H:i:s' }}"></div>
+                <a href="{% url 'view_gift' gift.id %}" class="view-gift-link">View Your Gift →</a>
+            </li>
+        {% empty %}
+            <li class="empty-message">No gift countdowns available at the moment.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+
+    <script>
+        function formatNumber(number) {
+            return number < 10 ? '0' + number : number;
+        }
+
+        function startCountdown(element, endDate) {
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const timeLeft = endDate - now;
+
+                if (timeLeft > 0) {
+                    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                    let countdownText = '';
+                    if (days > 0) {
+                        countdownText += `${days} day${days !== 1 ? 's' : ''}, `;
+                    }
+                    countdownText += `${formatNumber(hours)}:${formatNumber(minutes)}:${formatNumber(seconds)}`;
+                    element.innerHTML = countdownText;
+                } else {
+                    element.innerHTML = "<span class='available'>🎉 Your gift is ready to open!</span>";
+                    clearInterval(interval);
+
+                    const viewLink = element.nextElementSibling;
+                    if (viewLink) {
+                        viewLink.style.display = 'inline-block';
+                        viewLink.style.animation = 'fadeIn 0.5s ease-in';
+                    }
+                }
+            }
+
+            const interval = setInterval(updateCountdown, 1000);
+            updateCountdown();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.countdown').forEach(function(element) {
+                const countdownDate = element.getAttribute('data-countdown-date');
+                const endDate = new Date(countdownDate).getTime();
+                startCountdown(element, endDate);
+            });
+        });
+    </script>
+</body>
+</html>

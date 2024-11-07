@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+
+        h1 {
+            color: #4a4a7c;
+            font-size: 2em;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        h3 {
+            color: #4a4a7c;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            width: 100%;
+            background-color: #4a4a7c;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        .navbar a {
+            color: #ffffff;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: #3c3c6c;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            max-width: 500px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Form and List Styling */
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #4a4a7c;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        ul li {
+            background-color: #ffffff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        a {
+            color: #4a4a7c;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+    <script>
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="javascript:void(0);" onclick="showSection('addUserSection')">Add User</a>
+        <a href="javascript:void(0);" onclick="showSection('addGiftSection')">Add Gift</a>
+        <a href="javascript:void(0);" onclick="showSection('manageUsersSection')">Manage Users</a>
+        <a href="javascript:void(0);" onclick="showSection('manageGiftsSection')">Manage Gifts</a>
+    </div>
+
+    <!-- Add User Section -->
+    <div id="addUserSection" class="section active">
+        <h3>Add a New User</h3>
+        <form method="post" action="{% url 'admin_dashboard' %}">
+            {% csrf_token %}
+            {{ user_form.as_p }}  <!-- Ensure this is only rendered once -->
+            <button type="submit" name="add_user">Create User</button>
+        </form>
+    </div>
+
+    <!-- Add Gift Section -->
+    <div id="addGiftSection" class="section">
+        <h3>Add a New Gift Countdown</h3>
+        <form method="post" action="{% url 'admin_dashboard' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ gift_form.as_p }}  <!-- Ensure this is only rendered once -->
+            <label for="countdown_date">Countdown Date:</label>
+            <input type="datetime-local" name="countdown_date" required>
+            <label for="image">Attach Image:</label>
+            <input type="file" name="image" accept="image/*">
+            <label for="video">Attach Video:</label>
+            <input type="file" name="video" accept="video/*">
+            <button type="submit" name="add_gift">Add Gift Countdown</button>
+        </form>
+    </div>
+
+    <!-- Manage Users Section -->
+    <div id="manageUsersSection" class="section">
+        <h3>Manage Users</h3>
+        <ul>
+            {% for user in users %}
+                <li>
+                    {{ user.username }} - {{ user.email }}
+                    {% if user.is_staff %}(Admin){% else %}(User){% endif %}
+                    <form method="post" action="{% url 'delete_user' user.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                    </form>
+                </li>
+            {% empty %}
+                <li>No users found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Manage Gifts Section -->
+    <div id="manageGiftsSection" class="section">
+        <h3>Gift Countdowns</h3>
+        <ul>
+            {% for gift in gifts %}
+                <li>
+                    {{ gift.gift_name }} - Countdown to: {{ gift.countdown_date }} - Recipient: {{ gift.recipient.username }}
+                    {% if gift.image %}
+                        <div>
+                            <img src="{{ gift.image.url }}" alt="{{ gift.gift_name }}" style="max-width: 100px;">
+                        </div>
+                    {% endif %}
+                    {% if gift.video %}
+                        <div>
+                            <video width="320" height="240" controls>
+                                <source src="{{ gift.video.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    {% endif %}
+                    <form method="post" action="{% url 'delete_gift' gift.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this gift?');">Delete</button>
+                    </form>
+                </li>
+            {% empty %}
+                <li>No gifts found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Display Messages -->
+    {% if messages %}
+        <div>
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Logout Button -->
+    <a href="{% url 'logout' %}">Log Out</a>
+</body>
+</html>
