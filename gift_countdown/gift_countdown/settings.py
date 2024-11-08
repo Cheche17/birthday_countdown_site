@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-4)!zc*zcbcx4kf2doaff7x5ff*!r!lahnc_dh5x)1#-u!p%!tg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['main.up.railway.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'main.up.railway.app', 'https://mango-szn.onrender.com']
 
 
 # Application definition
