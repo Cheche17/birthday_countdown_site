@@ -3,9 +3,11 @@ services:
     name: gift-countdown-app
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn gift_countdown.wsgi:application --bind 0.0.0.0:8000 --no-log-socket-errors"
-    pythonVersion: 3.9  
+    command: "gunicorn gift_countdown.wsgi:application --bind 0.0.0.0:$PORT"
+    pythonVersion: 3.9
     disk:
-  
       mountPath: /var/lib/gift_countdown
       sizeGB: 1
+    envVars:
+      - key: PORT
+        value: "8000"
