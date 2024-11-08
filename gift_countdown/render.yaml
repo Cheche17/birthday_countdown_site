@@ -3,7 +3,7 @@ services:
     name: gift-countdown-app
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn gift_countdown.wsgi:application --bind 0.0.0.0:8000"
+    startCommand: "gunicorn gift_countdown.wsgi:application --bind 0.0.0.0:8000 --no-log-socket-errors"
     pythonVersion: 3.9  
     disk:
   
